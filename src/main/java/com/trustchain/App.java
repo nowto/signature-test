@@ -6,8 +6,7 @@ import org.kohsuke.args4j.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
-import java.security.*;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +17,7 @@ public class App {
     /**
      *
      */
-    private static final byte[] DEFAULT_UNSIGHED_DATA = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".getBytes(Charset.forName("UTF-8"));
+
 
     private UnsignedData unsignedData;
 
@@ -59,12 +58,13 @@ public class App {
     }
 
     private void doMain(String[] args){
-        initArgs(args);
-        checkAlgorithms();
-        initUnsighedData();
+        initAndCheck(args);
+        startTest();
     }
 
-    private void initArgs(String[] args) {
+
+
+    private void initAndCheck(String[] args) {
         ParserProperties properties = ParserProperties.defaults().withUsageWidth(80);
         CmdLineParser parser = new CmdLineParser(this, properties);
 
@@ -80,7 +80,7 @@ public class App {
             System.err.println();
             return;
         }
-        System.out.println(this);
+        initUnsighedData();
     }
 
     private void initUnsighedData() {
@@ -96,15 +96,22 @@ public class App {
             } catch (UnsupportedEncodingException e) {
                 System.err.println("不支持的encoding");
             }
-        } else {
-            unsignedData = new UnsignedData(DEFAULT_UNSIGHED_DATA);
         }
     }
 
-    private void checkAlgorithms() {
-        Security.getAlgorithms("Signature");
-    }
+    private void startTest() {
+        for (String algorithm : algorithms) {
+            SignatureTestCase signatureTestCase;
+            try {
+                signatureTestCase = new SignatureTestCase(algorithm);
+            } catch (NoSuchAlgorithmException e) {
+                System.out.println("不支持该算法： " + algorithm);
+                return;
+            }
 
+            signatureTestCase.test();
+        }
+    }
 
     @Override
     public String toString() {
