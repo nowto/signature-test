@@ -1,7 +1,11 @@
 package com.trustchain;
 
+/**
+ * 数据类
+ */
 public class Data {
-    private byte[] data = null;
+    private byte[] data;
+
     public Data(byte[] data) {
         this.data = data;
     }

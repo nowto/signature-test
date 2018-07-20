@@ -2,10 +2,17 @@ package com.trustchain;
 
 import java.security.*;
 
+/**
+ * 代表一个size相关的一套用于生成密钥、签名、验签的javaapi组件
+ */
 public class SignatureSuite {
-    private int keySize;
+    private int size;
 
+    /**
+     * 使用的消息摘要算法
+     */
     private static final String MESSAGE_DIGEST_ALGORITHM = "SHA256";
+
 
     private KeyPairGenerator keyPairGenerator;
 
@@ -14,17 +21,30 @@ public class SignatureSuite {
     private Signature verifySignature;
 
 
+    /**
+     * 未签名数据
+     */
     private byte[] unsignedData;
 
+    /**
+     * 签名后数据
+     */
     private byte[] signedData;
 
-    public SignatureSuite(String algorithm, int keySize, byte[] unsignedData) throws NoSuchAlgorithmException {
-        this.keySize = keySize;
+    /**
+     *
+     * @param algorithm 算法名
+     * @param size
+     * @param unsignedData 未签名数据
+     * @throws NoSuchAlgorithmException 不支持该算法
+     */
+    public SignatureSuite(String algorithm, int size, byte[] unsignedData) throws NoSuchAlgorithmException {
+        this.size = size;
 
         String algorithmName = MESSAGE_DIGEST_ALGORITHM + "WITH" + algorithm;
 
         keyPairGenerator = KeyPairGenerator.getInstance(algorithm);
-        keyPairGenerator.initialize(keySize);
+        keyPairGenerator.initialize(size);
         KeyPair keyPair = keyPairGenerator.generateKeyPair();
 
         signSignature = Signature.getInstance(algorithmName);
@@ -46,8 +66,8 @@ public class SignatureSuite {
         }
     }
 
-    public int getKeySize() {
-        return keySize;
+    public int getSize() {
+        return size;
     }
 
     public KeyPairGenerator getKeyPairGenerator() {

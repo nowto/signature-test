@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Hello world!
+ * 启动类
  */
 public class App {
     /**
