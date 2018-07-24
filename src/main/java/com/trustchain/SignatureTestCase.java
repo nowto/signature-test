@@ -12,7 +12,7 @@ class SignatureTestCase {
     /**
      * 默认要测试的size
      */
-    private static final int[] SIZES = {512, 1024, 2048, 3072, 4096, 7680, 15360};
+    private static final int[] KEYSIZES = {512, 1024, 2048, 3072, 4096, 7680, 15360};
 
 
     private static final int DEFAULT_SECONDS = 10;
@@ -33,81 +33,49 @@ class SignatureTestCase {
     SignatureTestCase(String algorithm) throws NoSuchAlgorithmException {
         this.algorithm = algorithm;
         suites = new ArrayList<>();
-        for (int size : SIZES) {
-            SignatureSuite suite = new SignatureSuite(algorithm, size);
+        for (int keySize : KEYSIZES) {
+            SignatureSuite suite = new SignatureSuite(algorithm, keySize);
             suites.add(suite);
         }
     }
 
     /**
      * @param algorithm 签名算法名
-     * @param size 如果<=0抛异常
+     * @param keySize 如果<=0抛异常
      * @throws NoSuchAlgorithmException 不支持该算法
      */
-    public SignatureTestCase(String algorithm, int size) throws NoSuchAlgorithmException {
-        if (size <= 0) {
+    public SignatureTestCase(String algorithm, int keySize) throws NoSuchAlgorithmException {
+        if (keySize <= 0) {
             throw new IllegalArgumentException("size 必须是一个正数");
         }
 
         this.algorithm = algorithm;
         suites = new ArrayList<>();
-        SignatureSuite suite = new SignatureSuite(algorithm, size);
+        SignatureSuite suite = new SignatureSuite(algorithm, keySize);
         suites.add(suite);
     }
 
 
     void test() {
-        generateKeyTest();
-        signTest();
-        verifyTest();
+        AlgorithmOpType.GENERATE_KEYPAIR.test(this).print();
+        AlgorithmOpType.SIGN.test(this).print();
+        AlgorithmOpType.VERIFY.test(this).print();
     }
 
-    private void generateKeyTest() {
-        Metrics metrics = new Metrics(algorithm, AlgorithmOpType.GENERATE_KEYPAIR);
-        for (SignatureSuite suite : suites) {
-            long deadline = System.currentTimeMillis() + seconds * 1000;
-            int size = suite.getSize();
-            int count = 0;
-            while (System.currentTimeMillis() < deadline) {
-                suite.generateKeyPair();
-                count++;
-            }
-            metrics.put(size, new Process(10, count));
-        }
-        metrics.print();
-    }
 
-    private void signTest() {
-        Metrics metrics = new Metrics(algorithm, AlgorithmOpType.SIGN);
-        for (SignatureSuite suite : suites) {
-            long deadline = System.currentTimeMillis() + seconds * 1000;
-            int size = suite.getSize();
-            int count = 0;
-            while (System.currentTimeMillis() < deadline) {
-                suite.sign();
-                count++;
-            }
-            metrics.put(size, new Process(10, count));
-        }
-        metrics.print();
-    }
-
-    private void verifyTest() {
-        Metrics metrics = new Metrics(algorithm, AlgorithmOpType.VERIFY);
-        for (SignatureSuite suite : suites) {
-            long deadline = System.currentTimeMillis() + seconds * 1000;
-            int size = suite.getSize();
-            int count = 0;
-            while (System.currentTimeMillis() < deadline) {
-                suite.verify();
-                count++;
-            }
-            metrics.put(size, new Process(10, count));
-        }
-        metrics.print();
-    }
-
-    public void setSeconds(int seconds) {
+    void setSeconds(int seconds) {
         this.seconds = seconds;
+    }
+
+    public List<SignatureSuite> getSuites() {
+        return suites;
+    }
+
+    public String getAlgorithm() {
+        return algorithm;
+    }
+
+    public int getSeconds() {
+        return seconds;
     }
 }

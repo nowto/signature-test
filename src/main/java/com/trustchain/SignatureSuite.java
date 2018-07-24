@@ -13,24 +13,38 @@ public class SignatureSuite {
     /**
      * 使用的消息摘要算法
      */
-    private static final String MESSAGE_DIGEST_ALGORITHM = "SHA256";
+    private static final String MESSAGE_DIGEST_ALGORITHM = "MD5";
 
     /**
-     * 用于签名验签的keySize
+     * 未校验数据大小
      */
-    private static final int KEY_SIZE = 1024;
+    private static final int UNSIGNED_DATA_SIZE = 36;
 
     /**
      * 数据大小
      * 用于生成key时为 keySize
      * 用于签名和验签时是数据大小
      */
-    private int size;
+    private int keySize;
 
+    /**
+     * 算法
+     */
+    private String algorithm;
+
+    /**
+     * 密钥对生成器
+     */
     private KeyPairGenerator keyPairGenerator;
 
+    /**
+     * 签名
+     */
     private Signature signSignature;
 
+    /**
+     * 校验
+     */
     private Signature verifySignature;
 
 
@@ -47,23 +61,23 @@ public class SignatureSuite {
     /**
      *
      * @param algorithm 算法名
-     * @param size
+     * @param keySize
      * @throws NoSuchAlgorithmException 不支持该算法
      */
-    public SignatureSuite(String algorithm, int size) throws NoSuchAlgorithmException {
+    public SignatureSuite(String algorithm, int keySize) throws NoSuchAlgorithmException {
+        // 初始化algorithm
+        this.algorithm = algorithm;
         // 初始化size
-        this.size = size;
+        this.keySize = keySize;
 
         String algorithmName = MESSAGE_DIGEST_ALGORITHM + "WITH" + algorithm;
 
         // 初始化KeyPairGenerator
         keyPairGenerator = KeyPairGenerator.getInstance(algorithm);
-        keyPairGenerator.initialize(size);
+        keyPairGenerator.initialize(getKeySize());
 
         // 初始化signSignature、verifySignature
-        KeyPairGenerator signVerifyKeyPairGenerator = KeyPairGenerator.getInstance(algorithm);
-        signVerifyKeyPairGenerator.initialize(KEY_SIZE);
-        KeyPair signVerifyKeyPair = signVerifyKeyPairGenerator.generateKeyPair();
+        KeyPair signVerifyKeyPair =  keyPairGenerator.generateKeyPair();
         signSignature = Signature.getInstance(algorithmName);
         verifySignature = Signature.getInstance(algorithmName);
         try {
@@ -74,7 +88,7 @@ public class SignatureSuite {
         }
 
         // 初始化 unsignedData、signedData
-        this.unsignedData = ByteUtils.random(size);
+        this.unsignedData = ByteUtils.randomBytes(UNSIGNED_DATA_SIZE);
         try {
             signSignature.update(this.unsignedData);
             this.signedData = signSignature.sign();
@@ -83,8 +97,12 @@ public class SignatureSuite {
         }
     }
 
-    public int getSize() {
-        return size;
+    public String getAlgorithm() {
+        return algorithm;
+    }
+
+    public int getKeySize() {
+        return keySize;
     }
 
     public void generateKeyPair() {

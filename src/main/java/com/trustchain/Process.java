@@ -34,4 +34,8 @@ public class Process {
     public double onceTime() {
         return seconds / count;
     }
+
+    void print() {
+//        System.out.println("你好啊");
+    }
 }

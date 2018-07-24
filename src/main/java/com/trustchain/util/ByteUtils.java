@@ -5,7 +5,7 @@ import java.util.Random;
 public class ByteUtils {
     private static final int BITS_ONEBYTE = 8;
 
-    public static byte[] random(int bits) {
+    public static byte[] randomBytes(int bits) {
         byte[] bytes = new byte[len(bits)];
 
         Random ran = new Random();
