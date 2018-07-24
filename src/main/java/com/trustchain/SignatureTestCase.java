@@ -24,6 +24,8 @@ class SignatureTestCase {
     private String algorithm;
 
     private List<SignatureSuite> suites;
+    // 并发进程数量
+    private int numThreads = 1;
 
     /**
      * 默认size使用[512, 1024, 2048, 3072, 4096, 7680, 15360]这几个等级
@@ -77,5 +79,16 @@ class SignatureTestCase {
 
     public int getSeconds() {
         return seconds;
+    }
+
+    public void setNumThreads(int numThreads) {
+        if (numThreads <= 0) {
+            throw new IllegalArgumentException("numTherads must be positive number, but you give [" + numThreads + "]");
+        }
+        this.numThreads = numThreads;
+    }
+
+    public int getNumThreads() {
+        return numThreads;
     }
 }

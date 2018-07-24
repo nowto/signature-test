@@ -15,6 +15,7 @@ public class SignatureTestCaseTest {
     @Before
     public void setUp() throws Exception {
         signatureTestCase = new SignatureTestCase("rsa");
+        signatureTestCase.setSeconds(3);
     }
 
     @After

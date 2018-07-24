@@ -23,7 +23,7 @@ public class Metrics {
     public void print() {
         System.out.println("\t\t\t" + opType + "\t" + opType + "/s");
         for (Map.Entry<Integer, Process> processEntry : processes.entrySet()) {
-            System.out.println(algorithm + "\t" +processEntry.getKey() + " bits\t" + processEntry.getValue().onceTime() + "\t" + processEntry.getValue().frequency());
+            System.out.printf("%s\t%d bits\t%f\t%f", algorithm, processEntry.getKey(), processEntry.getValue().onceTime(), processEntry.getValue().frequency());
         }
     }
 }

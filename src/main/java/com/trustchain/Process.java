@@ -1,5 +1,7 @@
 package com.trustchain;
 
+import java.util.List;
+
 /**
  * 代表用户指定seconds的那段过程
  */
@@ -19,12 +21,28 @@ public class Process {
         this.count = count;
     }
 
+    public Process(List<Process> processes) {
+        if (processes == null || processes.size() == 0) {
+            this.seconds = 0;
+            this.count = 0;
+            return;
+        }
+
+        int sumSeconds = 0;
+        int sumCount = 0;
+        for (Process process : processes) {
+            sumSeconds += process.seconds;
+            sumCount += process.count;
+        }
+        this.seconds = sumSeconds / processes.size();
+        this.count = sumCount;
+    }
     /**
      * 频率
      * @return
      */
     public double frequency() {
-        return count / seconds;
+        return  Math.round(count / seconds);
     }
 
     /**
@@ -35,7 +53,7 @@ public class Process {
         return seconds / count;
     }
 
-    void print() {
-//        System.out.println("你好啊");
+    public int getCount() {
+        return count;
     }
 }

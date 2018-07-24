@@ -14,6 +14,9 @@ public class App {
     @Option(name = "-seconds", usage = "运行秒数")
     private int seconds = 10;
 
+    @Option(name = "-multi", usage = "并发线程数")
+    private int multi = 1;
+
     @Argument
     private List<String> algorithms = new ArrayList<>();
 
@@ -53,6 +56,7 @@ public class App {
             try {
                 signatureTestCase = new SignatureTestCase(algorithm);
                 signatureTestCase.setSeconds(this.seconds);
+                signatureTestCase.setNumThreads(multi);
             } catch (NoSuchAlgorithmException e) {
                 System.out.println("不支持该算法： " + algorithm);
                 continue;
